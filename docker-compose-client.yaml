@@ -11,4 +11,4 @@ services:
       # - ./models:/app/models
     command: python code/main.py
     env_file:
-      - ./.env
+      - ./client/.env
