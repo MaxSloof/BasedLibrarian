@@ -3,16 +3,9 @@ version: '0.1'
 services:
   develop:
     build: .
-    image: maxsloof/intellisearch
+    image: maxsloof/basedlibrarian
     tty: true
     volumes:
       - ./code:/app/code
       - ./books:/app/books
-      - /home/max/Projects/MachineLearning/text-generation-webui/models:/app/models
-    deploy:
-      resources:
-        reservations:
-          devices:
-            - driver: nvidia
-              device_ids: ['0']
-              capabilities: [gpu]
+      - ./models:/app/models

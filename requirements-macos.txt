@@ -1,0 +1,9 @@
+llama-cpp-python
+pandoc 
+langchain 
+gradio 
+chromadb
+unstructured==0.6.8
+unstructured-inference==0.4.4
+pypdf
+sentence_transformers
