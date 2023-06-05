@@ -1,4 +1,8 @@
-# antilibrary
+# Deprecated!
+See [BasedLibrarian-client](https://github.com/MaxSloof/BasedLibrarian-client) and [BasedLibrarian-server](https://github.com/MaxSloof/BasedLibrarian-server)
+
+
+# Based Librarian
 
 A little tool that lets you ask questions from your pdfs, epubs, text files and word documents. Think Chatpdf.com or Box AI. 
 
