@@ -13,7 +13,7 @@ import prompt_template
 import file_loader
 
 # Document directory
-DOC_DIR = "../books"
+DOC_DIR = "./books/"
 
 # Vector db
 db = Chroma(embedding_function=VertexAIEmbeddings(), client_settings=vector_db.CHROMA_SETTINGS)
@@ -33,12 +33,14 @@ def embed_docs(progress=gr.Progress()):
 
     progress(0.1, desc="Scanning for new documents ...")
     # Cuts all docs into chunks of 1000 tokens
-    texts = file_loader.process_text()
+    texts = file_loader.process_text(DOC_DIR)
 
     if texts != None:
         progress(0.5,desc="Embedding documents ...")
         embeddings = VertexAIEmbeddings()
-        db.aadd_documents(texts, embedding=embeddings, persist_directory=vector_db.PERSIST_DIRECTORY)
+        db.add_documents(texts, embedding=embeddings, persist_directory=vector_db.PERSIST_DIRECTORY)
+        # Save all docs in the folder 
+        docs_in_folder = file_loader.docs_in_folder(DOC_DIR)
     if texts == None:
         progress(0.9, desc="No new documents found!")
         time.sleep(1)
@@ -58,7 +60,6 @@ def hard_embed_docs(progress=gr.Progress()):
 
     progress(0.4, desc="Embedding documents ...")
     embed_docs()
-
 
 # Main query code.
 def ask(query, selected_docs, progress=gr.Progress()):
@@ -104,8 +105,6 @@ docs_in_folder = file_loader.docs_in_folder(DOC_DIR)
 
 #Gradio UI
 with gr.Blocks() as app:
-
-    
     with gr.Row():
         gr.Markdown("# Welcome to your BasedLibrarian!")
         scan_btn = gr.Button("Scan the library again.")
@@ -115,10 +114,10 @@ with gr.Blocks() as app:
     output = gr.Textbox(label="Response:")
     ask_btn = gr.Button("Ask Librarian")
     # performance_box = gr.Textbox(label=f"Time to complete query:",)
-    checkbox_docs = gr.CheckboxGroup(docs_in_folder,value = docs_in_folder, label="Documents used as input for the model")
+    checkbox_docs = gr.CheckboxGroup(docs_in_folder,value = file_loader.docs_in_folder(DOC_DIR), label="Documents used as input for the model",every=5)
 
     ask_btn.click(fn=ask, inputs=[query, checkbox_docs], outputs=output)
     scan_btn.click(fn=embed_docs, outputs=output)
     hard_embed_btn.click(fn=hard_embed_docs, outputs=output)
 
-app.queue(concurrency_count=1).launch()
+app.queue(concurrency_count=1).launch(server_name="0.0.0.0")

@@ -1,7 +1,5 @@
 from typing import Dict, Optional
 from chromadb.config import Settings
-from langchain.embeddings import VertexAIEmbeddings
-from langchain.vectorstores import Chroma
 import os
 
 import file_loader
@@ -18,7 +16,7 @@ CHROMA_SETTINGS = Settings(
 def check_metadata_page(docs):
     for i in range(len(docs)):
         if 'page' not in docs[i].metadata.keys():
-            docs[i].metadata['page'] = "Not applicable"
+            docs[i].metadata['page'] = "not applicable"
     return docs
 
 def delete_database():

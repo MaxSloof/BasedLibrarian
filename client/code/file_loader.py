@@ -6,8 +6,10 @@ from langchain.document_loaders import UnstructuredEPubLoader
 from langchain.document_loaders import PyPDFLoader
 from langchain.text_splitter import CharacterTextSplitter
 
-def process_text():
-    library = create_library()
+embed_docs_dir = "/embed_docs.txt"
+
+def process_text(DOC_DIR):
+    library = create_library(DOC_DIR)
     text_splitter = CharacterTextSplitter(chunk_size=1000, chunk_overlap=0)
     texts = []
     for file_name in library:
@@ -26,12 +28,12 @@ def process_text():
 
 # Supported file extensions
 extensions = ['txt', 'md', 'pdf', 'doc', 'docx']
-def create_library():
+def create_library(DOC_DIR):
             
     # Initialize library as dict and load documents into it
     library = {}
     for extension in extensions:
-        for file_name in glob.glob("../books/*." + extension):
+        for file_name in glob.glob(f"{DOC_DIR}*." + extension):
             # Checks if doc has already been embedded
             if check_embed_docs(file_name):
               continue
@@ -57,10 +59,10 @@ def safe_embed_docs(file_name):
     Saves the file name of the document to a txt file that will be used to check whether the documents has already been added to the vector database
     """
     try:
-        with open('../embed_docs.txt', 'a') as f:
+        with open('../db/embed_docs.txt', 'a') as f:
             f.write(file_name + '\n')
     except FileNotFoundError:
-        with open('../embed_docs.txt', 'w') as f:
+        with open('../db/embed_docs.txt', 'w') as f:
             f.write(file_name + '\n')
 
 def check_embed_docs(file_name):
@@ -68,7 +70,7 @@ def check_embed_docs(file_name):
     Checks whether the document has already been added to the vector database
     """
     try:
-        with open(f'../embed_docs.txt', 'r') as f:
+        with open(f'../db/embed_docs.txt', 'r') as f:
             for line in f:
                 if line.strip() == file_name:
                     return True
@@ -80,7 +82,7 @@ def clear_embed_docs_file():
     """
     Clears the embed_docs.txt file
     """
-    with open('../embed_docs.txt', 'w') as f:
+    with open('../db/embed_docs.txt', 'w') as f:
         f.write('')
 
 def docs_in_folder(DOC_DIR):
@@ -89,7 +91,7 @@ def docs_in_folder(DOC_DIR):
     """
     docs_in_folder = []
     for extension in extensions:
-        for file_name in glob.glob("../books/*." + extension):
+        for file_name in glob.glob(f"{DOC_DIR}*." + extension):
             docs_in_folder.append(file_name)
     
     return docs_in_folder
